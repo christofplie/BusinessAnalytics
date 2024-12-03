@@ -1,66 +1,35 @@
 import os
 import re
 import pandas as pd
-from sklearn.feature_extraction.text import TfidfVectorizer
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
-from nltk.stem import WordNetLemmatizer
-
-# Download NLTK resources (if not already done)
-import nltk
-
-nltk.download('punkt')
-nltk.download('stopwords')
-nltk.download('wordnet')
+from transformers import BertTokenizer, BertModel
+import torch
 
 # Define file paths
 downloads_folder = os.path.expanduser("~/Downloads")
 input_file_path = os.path.join(downloads_folder, "latest_posts.csv")
-preprocessed_file_path_csv = os.path.join(downloads_folder, "latest_posts_cleaned.csv")
-preprocessed_file_path_excel = os.path.join(downloads_folder, "latest_posts_cleaned.xlsx")
-preprocessed_subset_file_path_excel = os.path.join(downloads_folder, "latest_posts_cleaned_subset.xlsx")
 
-# 1. Load the dataset
+# Load the dataset
 data = pd.read_csv(input_file_path)
-
-# 2. Handle missing values
 data = data.dropna(subset=["Body"]).reset_index(drop=True)
 
-# 3. Clean the text
-def clean_text(text):
-    text = re.sub(r'<[^>]*>', '', text)  # Remove HTML tags
-    text = re.sub(r'\W+', ' ', text)    # Remove special characters
-    text = text.lower()                 # Convert to lowercase
-    return text
+# Load BERT tokenizer and model
+tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+model = BertModel.from_pretrained('bert-base-uncased')
 
-data['Cleaned_Body'] = data['Body'].apply(clean_text)
+# Function to get BERT embeddings
+def get_bert_embeddings(text):
+    inputs = tokenizer(text, return_tensors="pt", truncation=True, max_length=512, padding="max_length")
+    outputs = model(**inputs)
+    return torch.mean(outputs.last_hidden_state, dim=1).squeeze().detach().numpy()  # Average over token embeddings
 
-# 4. Tokenize and remove stop words
-stop_words = set(stopwords.words('english'))
+# Generate embeddings
+data['Cleaned_Body'] = data['Body'].apply(lambda text: re.sub(r'<[^>]*>', '', text))  # Basic cleaning
+data['BERT_Embedding'] = data['Cleaned_Body'].apply(get_bert_embeddings)
 
-def tokenize_and_remove_stopwords(text):
-    tokens = word_tokenize(text)
-    return [word for word in tokens if word not in stop_words]
+# Convert embeddings to DataFrame
+bert_embeddings_df = pd.DataFrame(data['BERT_Embedding'].tolist())
 
-data['Tokens'] = data['Cleaned_Body'].apply(tokenize_and_remove_stopwords)
-
-# 5. Lemmatization
-lemmatizer = WordNetLemmatizer()
-
-def lemmatize_words(tokens):
-    return [lemmatizer.lemmatize(token) for token in tokens]
-
-data['Lemmatized_Tokens'] = data['Tokens'].apply(lemmatize_words)
-
-# 6. Generate TF-IDF matrix
-vectorizer = TfidfVectorizer(max_features=1000)  # Limit to top 1000 terms
-tfidf_matrix = vectorizer.fit_transform(data['Cleaned_Body'])
-
-# Convert TF-IDF matrix to a DataFrame for inspection
-tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), columns=vectorizer.get_feature_names_out())
-
-# 7. Save preprocessed data for further analysis
-data.to_csv(preprocessed_file_path_csv, index=False)
-data.to_excel(preprocessed_file_path_excel, index=False)
-
-print(f"Preprocessed data saved to {preprocessed_file_path_csv}")
+# Save embeddings for analysis
+bert_embeddings_path = os.path.join(downloads_folder, "bert_embeddings.csv")
+bert_embeddings_df.to_csv(bert_embeddings_path, index=False)
+print(f"BERT embeddings saved to {bert_embeddings_path}")

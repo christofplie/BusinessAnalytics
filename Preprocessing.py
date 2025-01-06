@@ -68,7 +68,7 @@ def remove_unwanted_words(text, words_to_remove):
     cleaned_text = re.sub(pattern, '', text)
     return re.sub(r'\s+', ' ', cleaned_text).strip()  # Normalize whitespace
 
-unwanted_words = ["nbsp", "exampleword", "anotherword"]
+unwanted_words = ["nbsp"]
 
 tqdm.pandas(desc="Removing unwanted words")
 english_data['Cleaned_Body'] = english_data['Cleaned_Body'].progress_apply(
@@ -83,9 +83,15 @@ def process_text_spacy(text):
 tqdm.pandas(desc="Tokenizing and lemmatizing")
 english_data['Lemmatized_Tokens'] = english_data['Cleaned_Body'].progress_apply(process_text_spacy)
 
-# 7. Save preprocessed English data
+# 7. Create a processed text column by joining lemmatized tokens
+print("Creating processed text column...")
+tqdm.pandas(desc="Joining lemmatized tokens")
+english_data['Processed_Text'] = english_data['Lemmatized_Tokens'].progress_apply(lambda tokens: ' '.join(tokens))
+
+# 8. Save preprocessed English data
 print(f"Saving preprocessed English data to {preprocessed_file_path_csv} and {preprocessed_file_path_xlsx}...")
 english_data.to_csv(preprocessed_file_path_csv, index=False)
 english_data.to_excel(preprocessed_file_path_xlsx, index=False)
 
 print("Preprocessing complete!")
+

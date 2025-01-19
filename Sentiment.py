@@ -13,7 +13,7 @@ print(sia.polarity_scores("This is a test sentence!"))
 
 # Define file paths
 downloads_folder = os.path.expanduser("~/Downloads")
-preprocessed_file_path_csv = os.path.join(downloads_folder, "latest_posts_cleaned.csv")
+preprocessed_file_path_csv = os.path.join(downloads_folder, "latest_posts_cleaned_new.csv")
 sentiment_output_file_csv = os.path.join(downloads_folder, "sentiment_analysis_results.csv")
 sentiment_output_file_xlsx = os.path.join(downloads_folder, "sentiment_analysis_results.xlsx")
 sentiment_chart_file_path = os.path.join(downloads_folder, "sentiment_distribution.png")
@@ -27,12 +27,12 @@ print("Initializing sentiment analyzer...")
 sia = SentimentIntensityAnalyzer()
 
 # Ensure that all entries in 'Processed_Text' are strings
-data['Cleaned_Body'] = data['Cleaned_Body'].fillna("").astype(str)
+data['Body'] = data['body'].fillna("").astype(str)
 
 # Apply sentiment analysis
 print("Performing sentiment analysis...")
 tqdm.pandas(desc="Analyzing sentiment")
-data['Sentiment_Scores'] = data['Cleaned_Body '].progress_apply(lambda text: sia.polarity_scores(text))
+data['Sentiment_Scores'] = data['Body'].progress_apply(lambda text: sia.polarity_scores(text))
 
 # Extract individual sentiment components
 data['Positive'] = data['Sentiment_Scores'].apply(lambda x: x['pos'])

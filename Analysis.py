@@ -11,16 +11,16 @@ cleaned_input_csv = os.path.join(downloads_folder, "latest_posts_cleaned.csv")
 # Define output paths
 outputs = {
     "unigram": {
-        "xlsx": os.path.join(downloads_folder, "unigram_summary.xlsx"),
-        "png": os.path.join(downloads_folder, "unigram_frequency_plot.png"),
+        "xlsx": os.path.join(downloads_folder, "unigram_summary_old.xlsx"),
+        "png": os.path.join(downloads_folder, "unigram_frequency_plot_old.png"),
     },
     "bigram": {
-        "xlsx": os.path.join(downloads_folder, "bigram_summary.xlsx"),
-        "png": os.path.join(downloads_folder, "bigram_frequency_plot.png"),
+        "xlsx": os.path.join(downloads_folder, "bigram_summary_old.xlsx"),
+        "png": os.path.join(downloads_folder, "bigram_frequency_plot_old.png"),
     },
     "trigram": {
-        "xlsx": os.path.join(downloads_folder, "trigram_summary.xlsx"),
-        "png": os.path.join(downloads_folder, "trigram_frequency_plot.png"),
+        "xlsx": os.path.join(downloads_folder, "trigram_summary_old.xlsx"),
+        "png": os.path.join(downloads_folder, "trigram_frequency_plot_old.png"),
     },
 }
 

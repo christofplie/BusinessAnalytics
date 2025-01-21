@@ -96,7 +96,7 @@ print(f"Document similarity matrix saved to {similarity_path}.")
 
 # 3. Clustering/Topic Modeling
 print("Performing clustering analysis...")
-num_clusters = 10  # Adjust as needed
+num_clusters = 4  # Adjust as needed
 kmeans = KMeans(n_clusters=num_clusters, random_state=42)
 clusters = kmeans.fit_predict(tfidf_matrix)
 english_data['Cluster'] = clusters

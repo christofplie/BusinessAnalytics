@@ -13,7 +13,7 @@ print(sia.polarity_scores("This is a test sentence!"))
 
 # Define file paths
 downloads_folder = os.path.expanduser("~/Downloads")
-preprocessed_file_path_csv = os.path.join(downloads_folder, "latest_posts_cleaned_new.csv")
+preprocessed_file_path_csv = os.path.join(downloads_folder, "latest_posts_cleaned.csv")
 sentiment_output_file_csv = os.path.join(downloads_folder, "sentiment_analysis_results.csv")
 sentiment_output_file_xlsx = os.path.join(downloads_folder, "sentiment_analysis_results.xlsx")
 sentiment_chart_file_path = os.path.join(downloads_folder, "sentiment_distribution.png")
@@ -27,7 +27,7 @@ print("Initializing sentiment analyzer...")
 sia = SentimentIntensityAnalyzer()
 
 # Ensure that all entries in 'Processed_Text' are strings
-data['Body'] = data['body'].fillna("").astype(str)
+data['Body'] = data['Body'].fillna("").astype(str)
 
 # Apply sentiment analysis
 print("Performing sentiment analysis...")

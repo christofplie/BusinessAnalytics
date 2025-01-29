@@ -6,7 +6,6 @@ from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 import seaborn as sns
 import matplotlib.pyplot as plt
-from openpyxl import Workbook
 
 # Define file paths
 downloads_folder = os.path.expanduser("~/Downloads")
@@ -15,16 +14,16 @@ cleaned_input_csv = os.path.join(downloads_folder, "latest_posts_cleaned.csv")
 # Define output paths
 outputs = {
     "unigram": {
-        "xlsx": os.path.join(downloads_folder, "unigram_summary_old.xlsx"),
-        "png": os.path.join(downloads_folder, "unigram_frequency_plot_old.png"),
+        "xlsx": os.path.join(downloads_folder, "unigram_summary.xlsx"),
+        "png": os.path.join(downloads_folder, "unigram_frequency_plot.png"),
     },
     "bigram": {
-        "xlsx": os.path.join(downloads_folder, "bigram_summary_old.xlsx"),
-        "png": os.path.join(downloads_folder, "bigram_frequency_plot_old.png"),
+        "xlsx": os.path.join(downloads_folder, "bigram_summary.xlsx"),
+        "png": os.path.join(downloads_folder, "bigram_frequency_plot.png"),
     },
     "trigram": {
-        "xlsx": os.path.join(downloads_folder, "trigram_summary_old.xlsx"),
-        "png": os.path.join(downloads_folder, "trigram_frequency_plot_old.png"),
+        "xlsx": os.path.join(downloads_folder, "trigram_summary.xlsx"),
+        "png": os.path.join(downloads_folder, "trigram_frequency_plot.png"),
     },
 }
 
@@ -62,7 +61,7 @@ def perform_ngram_analysis(texts, ngram_range, output_paths, title_prefix):
     plt.ylabel(f'{title_prefix}')
     plt.tight_layout()
     plt.savefig(output_paths['png'])
-    plt.close()  # Close the figure to prevent overlapping plots
+    plt.close()
     print(f"{title_prefix} frequency plot saved to {output_paths['png']}.")
 
 # Perform analysis for unigrams, bigrams, and trigrams
@@ -96,7 +95,7 @@ print(f"Document similarity matrix saved to {similarity_path}.")
 
 # 3. Clustering/Topic Modeling
 print("Performing clustering analysis...")
-num_clusters = 4  # Adjust as needed
+num_clusters = 4
 kmeans = KMeans(n_clusters=num_clusters, random_state=42)
 clusters = kmeans.fit_predict(tfidf_matrix)
 english_data['Cluster'] = clusters

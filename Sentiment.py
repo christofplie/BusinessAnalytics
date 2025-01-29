@@ -59,12 +59,20 @@ data.to_excel(sentiment_output_file_xlsx, index=False)
 # Plot sentiment distribution
 print("Creating sentiment distribution chart...")
 plt.figure(figsize=(8, 6))
-sns.countplot(data=data, x='Sentiment', palette='viridis', order=['Positive', 'Neutral', 'Negative'])
+
+# Custom color palette for sentiments
+sentiment_colors = {'Positive': '#2ecc71', 'Neutral': '#3498db', 'Negative': '#e74c3c'}
+
+sns.countplot(data=data, x='Sentiment', palette=sentiment_colors, order=['Positive', 'Neutral', 'Negative'])
 plt.title('Sentiment Distribution')
 plt.xlabel('Sentiment')
 plt.ylabel('Count')
 plt.savefig(sentiment_chart_file_path)
 plt.show()
+
+print(f"Sentiment distribution chart saved to {sentiment_chart_file_path}.")
+print("Sentiment analysis complete!")
+
 
 print(f"Sentiment distribution chart saved to {sentiment_chart_file_path}.")
 print("Sentiment analysis complete!")

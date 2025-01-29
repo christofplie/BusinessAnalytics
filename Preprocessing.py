@@ -15,22 +15,26 @@ nlp = spacy.load("en_core_web_sm")
 
 # Define file paths
 downloads_folder = os.path.expanduser("~/Downloads")
-input_file_path = os.path.join(downloads_folder, "rapidminernew_cleaned.csv")
-preprocessed_file_path_csv = os.path.join(downloads_folder, "latest_posts_cleaned_new.csv")
-preprocessed_file_path_xlsx = os.path.join(downloads_folder, "latest_posts_cleaned_new.xlsx")
-non_english_file_path_xlsx = os.path.join(downloads_folder, "non_english_posts_new.xlsx")
+input_file_path = os.path.join(downloads_folder, "latest_posts.csv")
+preprocessed_file_path_csv = os.path.join(downloads_folder, "latest_posts_cleaned.csv")
+preprocessed_file_path_xlsx = os.path.join(downloads_folder, "latest_posts_cleaned.xlsx")
+non_english_file_path_xlsx = os.path.join(downloads_folder, "non_english_posts.xlsx")
 
 # 1. Load the dataset
 print("Loading dataset...")
 data = pd.read_csv(input_file_path)
-data = data.dropna(subset=["body"]).reset_index(drop=True)
+
+if "stringsAsFactors" in data.columns:
+    data = data.drop(columns=["stringsAsFactors"])
+
+data = data.dropna(subset=["Body"]).reset_index(drop=True)
 
 # 2. Expand contractions
 print("Expanding contractions...")
 def expand_contractions(text):
     return contractions.fix(text)
 
-data['Body_Expanded'] = data['body'].apply(expand_contractions)
+data['Body_Expanded'] = data['Body'].apply(expand_contractions)
 
 # 3. Detect and filter by language
 print("Detecting language...")
@@ -57,7 +61,7 @@ def clean_text(text):
     text = re.sub(r'<[^>]*>', '', text)  # Remove HTML tags
     text = re.sub(r'[^\w\s]', '', text)  # Remove special characters
     text = re.sub(r'\s+', ' ', text)     # Normalize whitespace
-    return text.lower().strip()          # Convert to lowercase
+    return text.lower().strip()                      # Convert to lowercase
 
 tqdm.pandas(desc="Cleaning text")
 english_data['Cleaned_Body'] = english_data['Body_Expanded'].progress_apply(clean_text)

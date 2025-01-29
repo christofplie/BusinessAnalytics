@@ -51,28 +51,20 @@ def classify_sentiment(score):
 
 data['Sentiment'] = data['Compound'].apply(classify_sentiment)
 
+# Second classification: Custom thresholds
+def classify_sentiment_custom(score):
+    if score > 0.35:
+        return "Positive"
+    elif score < -0.05:
+        return "Negative"
+    else:
+        return "Neutral"
+
+data['Sentiment_Custom'] = data['Compound'].apply(classify_sentiment_custom)
+
 # Save sentiment analysis results to CSV and Excel
 print(f"Saving sentiment analysis results to {sentiment_output_file_csv} and {sentiment_output_file_xlsx}...")
 data.to_csv(sentiment_output_file_csv, index=False)
 data.to_excel(sentiment_output_file_xlsx, index=False)
 
-# Plot sentiment distribution
-print("Creating sentiment distribution chart...")
-plt.figure(figsize=(8, 6))
 
-# Custom color palette for sentiments
-sentiment_colors = {'Positive': '#2ecc71', 'Neutral': '#3498db', 'Negative': '#e74c3c'}
-
-sns.countplot(data=data, x='Sentiment', palette=sentiment_colors, order=['Positive', 'Neutral', 'Negative'])
-plt.title('Sentiment Distribution')
-plt.xlabel('Sentiment')
-plt.ylabel('Count')
-plt.savefig(sentiment_chart_file_path)
-plt.show()
-
-print(f"Sentiment distribution chart saved to {sentiment_chart_file_path}.")
-print("Sentiment analysis complete!")
-
-
-print(f"Sentiment distribution chart saved to {sentiment_chart_file_path}.")
-print("Sentiment analysis complete!")

@@ -14,29 +14,30 @@ data = pd.read_csv(input_file)
 # Convert stringified lists to actual lists of tokens
 data['Lemmatized_Tokens'] = data['Lemmatized_Tokens'].apply(literal_eval)
 
-# Flatten all tokens into a single list
-all_tokens = [token for sublist in data['Lemmatized_Tokens'].dropna() for token in sublist]
+# Flatten and filter tokens (exclude 1-2 character tokens)
+all_tokens = [token for sublist in data['Lemmatized_Tokens'].dropna()
+             for token in sublist if len(token) > 2]
 
 # Create frequency dictionary
 word_freq = pd.Series(all_tokens).value_counts().to_dict()
 
-# Generate word cloud
+# Generate word cloud with PowerPoint-optimized dimensions
 wordcloud = WordCloud(
-    width=1200,
-    height=800,
+    width=1920,
+    height=1080,
     background_color='white',
     colormap='viridis',
-    max_words=150
+    max_words=150,
+    collocations=False
 ).generate_from_frequencies(word_freq)
 
-# Plot
-plt.figure(figsize=(15, 10))
+# Create figure with PowerPoint slide dimensions (13.3x7.5 inches for 16:9)
+plt.figure(figsize=(19.2, 10.8))
 plt.imshow(wordcloud, interpolation='bilinear')
 plt.axis('off')
 
-# Save and show
-wordcloud_path = os.path.join(downloads_folder, "lemmatized_wordcloud.png")
-plt.savefig(wordcloud_path, bbox_inches='tight')
+# Save as high-quality PNG for PowerPoint
+wordcloud_path = os.path.join(downloads_folder, "ppt_wordcloud.png")
+plt.savefig(wordcloud_path, bbox_inches='tight', dpi=100)
 plt.show()
-print(f"Word cloud saved to: {wordcloud_path}")
-
+print(f"PowerPoint-ready word cloud saved to: {wordcloud_path}")

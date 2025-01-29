@@ -35,7 +35,7 @@ english_data = pd.read_csv(cleaned_input_csv)
 print("Preparing text for analysis...")
 english_data['Processed_Text'] = english_data['Lemmatized_Tokens'].apply(lambda tokens: ' '.join(eval(tokens)))
 
-# Function to perform n-gram analysis
+# Perform n-gram analysis
 def perform_ngram_analysis(texts, ngram_range, output_paths, title_prefix):
     print(f"Performing {title_prefix.lower()} analysis...")
 
@@ -54,15 +54,25 @@ def perform_ngram_analysis(texts, ngram_range, output_paths, title_prefix):
 
     # Visualize top 20 n-grams
     top_ngrams = ngram_summary.head(20)
-    plt.figure(figsize=(10, 6))
-    sns.barplot(data=top_ngrams, x='Frequency', y='N-gram', hue='N-gram', dodge=False, legend=False)
-    plt.title(f'Top 20 Most Frequent {title_prefix}')
-    plt.xlabel('Frequency')
-    plt.ylabel(f'{title_prefix}')
+
+    plt.figure(figsize=(12, 8))
+    ax = sns.barplot(data=top_ngrams, x='Frequency', y='N-gram',
+                     palette='viridis', edgecolor='none')
+
+    # Customize the plot
+    plt.title(f'Top 20 Most Frequent {title_prefix}', fontsize=16, pad=20)
+    plt.xlabel('Frequency', fontsize=12)
+    plt.ylabel(f'{title_prefix}', fontsize=12)
+
+    # Add value labels to the end of each bar
+    for i, v in enumerate(top_ngrams['Frequency']):
+        ax.text(v + 0.5, i, str(v), va='center', fontsize=10)
+
     plt.tight_layout()
-    plt.savefig(output_paths['png'])
+    plt.savefig(output_paths['png'], dpi=300, bbox_inches='tight')
     plt.close()
     print(f"{title_prefix} frequency plot saved to {output_paths['png']}.")
+
 
 # Perform analysis for unigrams, bigrams, and trigrams
 perform_ngram_analysis(english_data['Processed_Text'], (1, 1), outputs["unigram"], "Unigrams")
